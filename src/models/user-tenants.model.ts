@@ -1,71 +1,87 @@
-import {Entity, model, property} from '@loopback/repository';
+import {belongsTo, model, property} from '@loopback/repository';
+import {BaseEntity} from './base-entity';
+import {Roles} from './roles.model';
+import {Users} from './users.model';
+import {Tenants} from './tenants.model';
 
 @model({
   settings: {
     idInjection: false,
-    postgresql: {schema: 'multi_tenant_kanban', table: 'user_tenants'}
-  }
+    postgresql: {schema: 'multi_tenant_kanban', table: 'user_tenants'},
+  },
 })
-export class UserTenants extends Entity {
+export class UserTenants extends BaseEntity {
   @property({
     type: 'number',
     required: true,
     scale: 0,
     id: 1,
-    postgresql: {columnName: 'id', dataType: 'integer', dataLength: null, dataPrecision: null, dataScale: 0, nullable: 'NO'},
+    postgresql: {
+      columnName: 'id',
+      dataType: 'integer',
+      dataLength: null,
+      dataPrecision: null,
+      dataScale: 0,
+      nullable: 'NO',
+    },
   })
   id: number;
 
-  @property({
-    type: 'number',
-    required: true,
-    scale: 0,
-    postgresql: {columnName: 'user_id', dataType: 'integer', dataLength: null, dataPrecision: null, dataScale: 0, nullable: 'NO'},
-  })
+  @belongsTo(
+    () => Users,
+    {keyFrom: 'user_id', name: 'user_id'},
+    {
+      name: 'user_id',
+      required: true,
+    },
+  )
   userId: number;
 
-  @property({
-    type: 'number',
-    required: true,
-    scale: 0,
-    postgresql: {columnName: 'tenant_id', dataType: 'integer', dataLength: null, dataPrecision: null, dataScale: 0, nullable: 'NO'},
-  })
+  @belongsTo(
+    () => Tenants,
+    {keyFrom: 'tenant_id', name: 'tenant_id'},
+    {
+      name: 'tenant_id',
+      required: true,
+    },
+  )
   tenantId: number;
-
-  @property({
-    type: 'date',
-    required: true,
-    postgresql: {columnName: 'created_on', dataType: 'timestamp with time zone', dataLength: null, dataPrecision: null, dataScale: null, nullable: 'NO'},
-  })
-  createdOn: string;
-
-  @property({
-    type: 'date',
-    required: true,
-    postgresql: {columnName: 'modified_on', dataType: 'timestamp with time zone', dataLength: null, dataPrecision: null, dataScale: null, nullable: 'NO'},
-  })
-  modifiedOn: string;
+  @belongsTo(
+    () => Roles,
+    {keyFrom: 'role_id', name: 'role_id'},
+    {
+      name: 'role_id',
+      required: true,
+    },
+  )
+  roleId: number;
 
   @property({
     type: 'boolean',
     required: true,
-    postgresql: {columnName: 'deleted', dataType: 'boolean', dataLength: null, dataPrecision: null, dataScale: null, nullable: 'NO'},
+    postgresql: {
+      columnName: 'deleted',
+      dataType: 'boolean',
+      dataLength: null,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'NO',
+    },
   })
   deleted: boolean;
-
-  @property({
-    type: 'number',
-    required: true,
-    scale: 0,
-    postgresql: {columnName: 'role_id', dataType: 'integer', dataLength: null, dataPrecision: null, dataScale: 0, nullable: 'NO'},
-  })
-  roleId: number;
 
   @property({
     type: 'string',
     required: true,
     length: 50,
-    postgresql: {columnName: 'status', dataType: 'character varying', dataLength: 50, dataPrecision: null, dataScale: null, nullable: 'NO'},
+    postgresql: {
+      columnName: 'status',
+      dataType: 'character varying',
+      dataLength: 50,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'NO',
+    },
   })
   status: string;
 

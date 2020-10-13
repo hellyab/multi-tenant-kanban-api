@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {UserTenants} from './user-tenants.model';
 
 @model({
   settings: {
@@ -25,19 +26,14 @@ export class UserTenantPermissions extends Entity {
   })
   id: number;
 
-  @property({
-    type: 'number',
-    required: true,
-    scale: 0,
-    postgresql: {
-      columnName: 'user_tenant_id',
-      dataType: 'integer',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: 0,
-      nullable: 'NO',
+  @belongsTo(
+    () => UserTenants,
+    {keyFrom: 'user_tenant_id', name: 'user_tenant_id'},
+    {
+      name: 'user_tenant_id',
+      required: true,
     },
-  })
+  )
   userTenantId: number;
 
   @property({

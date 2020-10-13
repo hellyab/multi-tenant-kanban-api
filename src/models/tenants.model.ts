@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {model, property} from '@loopback/repository';
+import {UserModifiableEntity} from './user-modifiable-entity.model';
 
 @model({
   settings: {
@@ -6,7 +7,7 @@ import {Entity, model, property} from '@loopback/repository';
     postgresql: {schema: 'multi_tenant_kanban', table: 'tenants'},
   },
 })
-export class Tenants extends Entity {
+export class Tenants extends UserModifiableEntity {
   @property({
     type: 'number',
     scale: 0,
@@ -51,34 +52,6 @@ export class Tenants extends Entity {
     },
   })
   type: string;
-
-  @property({
-    type: 'date',
-    required: true,
-    postgresql: {
-      columnName: 'created_on',
-      dataType: 'timestamp with time zone',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  createdOn: string;
-
-  @property({
-    type: 'date',
-    required: true,
-    postgresql: {
-      columnName: 'modified_on',
-      dataType: 'timestamp with time zone',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  modifiedOn: string;
 
   @property({
     type: 'number',

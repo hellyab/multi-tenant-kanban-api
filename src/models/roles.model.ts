@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {model, property} from '@loopback/repository';
+import {BaseEntity} from './base-entity';
 
 @model({
   settings: {
@@ -6,7 +7,7 @@ import {Entity, model, property} from '@loopback/repository';
     postgresql: {schema: 'multi_tenant_kanban', table: 'roles'},
   },
 })
-export class Roles extends Entity {
+export class Roles extends BaseEntity {
   @property({
     type: 'number',
     scale: 0,
@@ -36,34 +37,6 @@ export class Roles extends Entity {
     },
   })
   name: string;
-
-  @property({
-    type: 'date',
-    required: true,
-    postgresql: {
-      columnName: 'created_on',
-      dataType: 'timestamp with time zone',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  createdOn: string;
-
-  @property({
-    type: 'date',
-    required: true,
-    postgresql: {
-      columnName: 'modified_on',
-      dataType: 'timestamp with time zone',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  modifiedOn: string;
 
   @property({
     type: 'boolean',
