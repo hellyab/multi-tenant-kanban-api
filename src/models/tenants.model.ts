@@ -54,48 +54,6 @@ export class Tenants extends UserModifiableEntity {
   type: string;
 
   @property({
-    type: 'number',
-    scale: 0,
-    postgresql: {
-      columnName: 'created_by',
-      dataType: 'integer',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: 0,
-      nullable: 'YES',
-    },
-  })
-  createdBy?: number;
-
-  @property({
-    type: 'number',
-    scale: 0,
-    postgresql: {
-      columnName: 'modified_by',
-      dataType: 'integer',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: 0,
-      nullable: 'YES',
-    },
-  })
-  modifiedBy?: number;
-
-  @property({
-    type: 'boolean',
-    required: true,
-    postgresql: {
-      columnName: 'deleted',
-      dataType: 'boolean',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  deleted: boolean;
-
-  @property({
     type: 'string',
     length: 100,
     postgresql: {

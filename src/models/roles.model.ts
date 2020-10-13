@@ -39,20 +39,6 @@ export class Roles extends BaseEntity {
   name: string;
 
   @property({
-    type: 'boolean',
-    required: true,
-    postgresql: {
-      columnName: 'deleted',
-      dataType: 'boolean',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  deleted: boolean;
-
-  @property({
     type: 'string',
     postgresql: {
       columnName: 'permissions',

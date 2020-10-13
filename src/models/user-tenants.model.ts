@@ -46,6 +46,7 @@ export class UserTenants extends BaseEntity {
     },
   )
   tenantId: number;
+
   @belongsTo(
     () => Roles,
     {keyFrom: 'role_id', name: 'role_id'},
@@ -55,20 +56,6 @@ export class UserTenants extends BaseEntity {
     },
   )
   roleId: number;
-
-  @property({
-    type: 'boolean',
-    required: true,
-    postgresql: {
-      columnName: 'deleted',
-      dataType: 'boolean',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  deleted: boolean;
 
   @property({
     type: 'string',
