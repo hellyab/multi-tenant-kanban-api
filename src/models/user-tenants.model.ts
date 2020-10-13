@@ -13,7 +13,6 @@ import {Tenants} from './tenants.model';
 export class UserTenants extends BaseEntity {
   @property({
     type: 'number',
-    required: true,
     scale: 0,
     id: 1,
     postgresql: {

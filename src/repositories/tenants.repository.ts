@@ -8,9 +8,7 @@ export class TenantsRepository extends DefaultCrudRepository<
   typeof Tenants.prototype.id,
   TenantsRelations
 > {
-  constructor(
-    @inject('datasources.pgdb') dataSource: PgdbDataSource,
-  ) {
+  constructor(@inject('datasources.pgdb') dataSource: PgdbDataSource) {
     super(Tenants, dataSource);
   }
 }

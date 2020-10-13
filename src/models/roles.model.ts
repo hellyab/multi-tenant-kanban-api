@@ -5,6 +5,7 @@ import {BaseEntity} from './base-entity';
   settings: {
     idInjection: false,
     postgresql: {schema: 'multi_tenant_kanban', table: 'roles'},
+    table: 'roles',
   },
 })
 export class Roles extends BaseEntity {
@@ -38,18 +39,17 @@ export class Roles extends BaseEntity {
   })
   name: string;
 
-  @property({
-    type: 'string',
+  @property.array(String, {
     postgresql: {
       columnName: 'permissions',
-      dataType: 'ARRAY',
+      dataType: 'varchar[]',
       dataLength: null,
       dataPrecision: null,
       dataScale: null,
       nullable: 'YES',
     },
   })
-  permissions?: string;
+  permissions?: string[];
 
   @property({
     type: 'number',

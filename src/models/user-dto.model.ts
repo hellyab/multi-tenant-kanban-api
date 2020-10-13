@@ -44,6 +44,7 @@ export class UserDto extends Model {
 
   @property({
     type: 'string',
+    required: 'true',
   })
   role: string;
 

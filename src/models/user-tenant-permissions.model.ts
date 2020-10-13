@@ -1,5 +1,6 @@
-import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {belongsTo, model, property} from '@loopback/repository';
 import {UserTenants} from './user-tenants.model';
+import {BaseEntity} from './base-entity';
 
 @model({
   settings: {
@@ -10,7 +11,7 @@ import {UserTenants} from './user-tenants.model';
     },
   },
 })
-export class UserTenantPermissions extends Entity {
+export class UserTenantPermissions extends BaseEntity {
   @property({
     type: 'number',
     scale: 0,
@@ -35,34 +36,6 @@ export class UserTenantPermissions extends Entity {
     },
   )
   userTenantId: number;
-
-  @property({
-    type: 'date',
-    required: true,
-    postgresql: {
-      columnName: 'created_on',
-      dataType: 'date',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  createdOn: string;
-
-  @property({
-    type: 'date',
-    required: true,
-    postgresql: {
-      columnName: 'modified_on',
-      dataType: 'date',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  modifiedOn: string;
 
   @property({
     type: 'number',
@@ -91,20 +64,6 @@ export class UserTenantPermissions extends Entity {
     },
   })
   modifiedBy?: number;
-
-  @property({
-    type: 'boolean',
-    required: true,
-    postgresql: {
-      columnName: 'deleted',
-      dataType: 'boolean',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  deleted: boolean;
 
   @property({
     type: 'string',

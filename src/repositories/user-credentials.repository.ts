@@ -8,9 +8,7 @@ export class UserCredentialsRepository extends DefaultCrudRepository<
   typeof UserCredentials.prototype.id,
   UserCredentialsRelations
 > {
-  constructor(
-    @inject('datasources.pgdb') dataSource: PgdbDataSource,
-  ) {
+  constructor(@inject('datasources.pgdb') dataSource: PgdbDataSource) {
     super(UserCredentials, dataSource);
   }
 }
