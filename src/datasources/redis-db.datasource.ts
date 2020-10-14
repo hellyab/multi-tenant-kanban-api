@@ -2,14 +2,13 @@ import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 
 const config = {
-  name: 'pgdb',
-  connector: 'postgresql',
-  host: 'localhost',
-  port: '5432',
-  user: 'postgres',
+  name: 'RedisDB',
+  connector: 'kv-redis',
+  url: '',
+  host: 'redis-17954.c1.ap-southeast-1-1.ec2.cloud.redislabs.com',
+  port: 17954,
   password: 'password',
-  database: 'multi_tenant_kanban',
-  schema: 'multi_tenant_kanban',
+  db: 0,
 };
 
 // Observe application's life cycle to disconnect the datasource when
@@ -17,24 +16,16 @@ const config = {
 // gracefully. The `stop()` method is inherited from `juggler.DataSource`.
 // Learn more at https://loopback.io/doc/en/lb4/Life-cycle.html
 @lifeCycleObserver('datasource')
-export class PgdbDataSource
+export class RedisDbDataSource
   extends juggler.DataSource
   implements LifeCycleObserver {
-  static dataSourceName = 'pgdb';
+  static dataSourceName = 'RedisDB';
   static readonly defaultConfig = config;
 
   constructor(
-    @inject('datasources.config.pgdb', {optional: true})
+    @inject('datasources.config.RedisDB', {optional: true})
     dsConfig: object = config,
   ) {
-    Object.assign(dsConfig, {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-      schema: process.env.DB_SCHEMA,
-    });
     super(dsConfig);
   }
 }

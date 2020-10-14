@@ -1,19 +1,19 @@
 import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
 import {del, get, getModelSchemaRef, param, patch, post, put, requestBody} from '@loopback/rest';
-import {Tenants} from '../models';
-import {TenantsRepository} from '../repositories';
+import {Tenant} from '../models';
+import {TenantRepository} from '../repositories';
 
 export class TenantController {
   constructor(
-    @repository(TenantsRepository)
-    public tenantsRepository: TenantsRepository,
+    @repository(TenantRepository)
+    public tenantsRepository: TenantRepository,
   ) {}
 
   @post('/tenants', {
     responses: {
       '200': {
         description: 'Tenants model instance',
-        content: {'application/json': {schema: getModelSchemaRef(Tenants)}},
+        content: {'application/json': {schema: getModelSchemaRef(Tenant)}},
       },
     },
   })
@@ -21,15 +21,15 @@ export class TenantController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Tenants, {
+          schema: getModelSchemaRef(Tenant, {
             title: 'NewTenants',
             exclude: ['id'],
           }),
         },
       },
     })
-    tenants: Omit<Tenants, 'id'>,
-  ): Promise<Tenants> {
+    tenants: Omit<Tenant, 'id'>,
+  ): Promise<Tenant> {
     return this.tenantsRepository.create(tenants);
   }
 
@@ -41,7 +41,7 @@ export class TenantController {
       },
     },
   })
-  async count(@param.where(Tenants) where?: Where<Tenants>): Promise<Count> {
+  async count(@param.where(Tenant) where?: Where<Tenant>): Promise<Count> {
     return this.tenantsRepository.count(where);
   }
 
@@ -53,16 +53,14 @@ export class TenantController {
           'application/json': {
             schema: {
               type: 'array',
-              items: getModelSchemaRef(Tenants, {includeRelations: true}),
+              items: getModelSchemaRef(Tenant, {includeRelations: true}),
             },
           },
         },
       },
     },
   })
-  async find(
-    @param.filter(Tenants) filter?: Filter<Tenants>,
-  ): Promise<Tenants[]> {
+  async find(@param.filter(Tenant) filter?: Filter<Tenant>): Promise<Tenant[]> {
     return this.tenantsRepository.find(filter);
   }
 
@@ -78,12 +76,12 @@ export class TenantController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Tenants, {partial: true}),
+          schema: getModelSchemaRef(Tenant, {partial: true}),
         },
       },
     })
-    tenants: Tenants,
-    @param.where(Tenants) where?: Where<Tenants>,
+    tenants: Tenant,
+    @param.where(Tenant) where?: Where<Tenant>,
   ): Promise<Count> {
     return this.tenantsRepository.updateAll(tenants, where);
   }
@@ -94,7 +92,7 @@ export class TenantController {
         description: 'Tenants model instance',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(Tenants, {includeRelations: true}),
+            schema: getModelSchemaRef(Tenant, {includeRelations: true}),
           },
         },
       },
@@ -102,9 +100,9 @@ export class TenantController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Tenants, {exclude: 'where'})
-    filter?: FilterExcludingWhere<Tenants>,
-  ): Promise<Tenants> {
+    @param.filter(Tenant, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Tenant>,
+  ): Promise<Tenant> {
     return this.tenantsRepository.findById(id, filter);
   }
 
@@ -120,11 +118,11 @@ export class TenantController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Tenants, {partial: true}),
+          schema: getModelSchemaRef(Tenant, {partial: true}),
         },
       },
     })
-    tenants: Tenants,
+    tenants: Tenant,
   ): Promise<void> {
     await this.tenantsRepository.updateById(id, tenants);
   }
@@ -138,7 +136,7 @@ export class TenantController {
   })
   async replaceById(
     @param.path.number('id') id: number,
-    @requestBody() tenants: Tenants,
+    @requestBody() tenants: Tenant,
   ): Promise<void> {
     await this.tenantsRepository.replaceById(id, tenants);
   }

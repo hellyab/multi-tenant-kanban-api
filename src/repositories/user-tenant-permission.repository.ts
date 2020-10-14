@@ -1,24 +1,24 @@
 import {BelongsToAccessor, DefaultCrudRepository, repository} from '@loopback/repository';
-import {UserTenantPermissions, UserTenantPermissionsRelations, UserTenants} from '../models';
+import {UserTenant, UserTenantPermission, UserTenantPermissionsRelations} from '../models';
 import {PgdbDataSource} from '../datasources';
 import {Getter, inject} from '@loopback/core';
-import {UserTenantsRepository} from './user-tenants.repository';
+import {UserTenantRepository} from './user-tenant.repository';
 
-export class UserTenantPermissionsRepository extends DefaultCrudRepository<
-  UserTenantPermissions,
-  typeof UserTenantPermissions.prototype.id,
+export class UserTenantPermissionRepository extends DefaultCrudRepository<
+  UserTenantPermission,
+  typeof UserTenantPermission.prototype.id,
   UserTenantPermissionsRelations
 > {
   public readonly userTenant: BelongsToAccessor<
-    UserTenants,
-    typeof UserTenantPermissions.prototype.id
+    UserTenant,
+    typeof UserTenantPermission.prototype.id
   >;
   constructor(
     @inject('datasources.pgdb') dataSource: PgdbDataSource,
     @repository.getter('UserTenantsRepository')
-    utRepositoryGetter: Getter<UserTenantsRepository>,
+    utRepositoryGetter: Getter<UserTenantRepository>,
   ) {
-    super(UserTenantPermissions, dataSource);
+    super(UserTenantPermission, dataSource);
     this.userTenant = this.createBelongsToAccessorFor(
       'user_tenant_id',
       utRepositoryGetter,

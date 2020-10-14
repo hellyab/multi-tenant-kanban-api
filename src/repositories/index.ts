@@ -1,6 +1,9 @@
-export * from './roles.repository';
-export * from './tenants.repository';
-export * from './user-credentials.repository';
-export * from './user-tenant-permissions.repository';
-export * from './user-tenants.repository';
-export * from './users.repository';
+export * from './role.repository';
+export * from './tenant.repository';
+export * from './user-tenant-permission.repository';
+export * from './user-tenant.repository';
+export * from './user.repository';
+// export * from './audit-log.repository';
+// export * from './auth-client.repository';
+// export * from './refresh-token.repository';
+// export * from './revoked-token.repository';

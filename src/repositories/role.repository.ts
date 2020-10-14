@@ -1,14 +1,14 @@
 import {DefaultCrudRepository} from '@loopback/repository';
-import {Tenants, TenantsRelations} from '../models';
+import {Role, RolesRelations} from '../models';
 import {PgdbDataSource} from '../datasources';
 import {inject} from '@loopback/core';
 
-export class TenantsRepository extends DefaultCrudRepository<
-  Tenants,
-  typeof Tenants.prototype.id,
-  TenantsRelations
+export class RoleRepository extends DefaultCrudRepository<
+  Role,
+  typeof Role.prototype.id,
+  RolesRelations
 > {
   constructor(@inject('datasources.pgdb') dataSource: PgdbDataSource) {
-    super(Tenants, dataSource);
+    super(Role, dataSource);
   }
 }

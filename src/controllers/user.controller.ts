@@ -1,27 +1,105 @@
 import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
-import {del, get, getModelSchemaRef, HttpErrors, param, patch, post, put, requestBody} from '@loopback/rest';
-import {Tenants, UserDto, Users, UserTenantPermissions, UserTenants} from '../models';
+import {SecurityBindings} from '@loopback/security';
+import {genSalt, hash} from 'bcryptjs';
+import {v4 as uuid} from 'uuid';
 import {
-  RolesRepository,
-  TenantsRepository,
-  UsersRepository,
-  UserTenantPermissionsRepository,
-  UserTenantsRepository,
+  del,
+  get,
+  getModelSchemaRef,
+  HttpErrors,
+  param,
+  patch,
+  post,
+  put,
+  requestBody,
+  SchemaObject,
+} from '@loopback/rest';
+import {Tenant, User, UserDto, UserTenant, UserTenantPermission} from '../models';
+import {
+  RoleRepository,
+  TenantRepository,
+  UserRepository,
+  UserTenantPermissionRepository,
+  UserTenantRepository,
 } from '../repositories';
+import {Credentials, MyUserService, TokenServiceBindings, UserServiceBindings} from '@loopback/authentication-jwt';
+import {inject} from '@loopback/core';
+import {authenticate, TokenService} from '@loopback/authentication';
+import _ from 'lodash';
+
+const CredentialsSchema: SchemaObject = {
+  type: 'object',
+  required: ['email', 'password'],
+  properties: {
+    username: {
+      type: 'string',
+      format: 'email',
+    },
+    password: {
+      type: 'string',
+      // minLength: 8,
+    },
+  },
+};
+
+export const CredentialsRequestBody = {
+  description: 'The input of login function',
+  required: true,
+  content: {
+    'application/json': {schema: CredentialsSchema},
+  },
+};
 
 export class UserController {
   constructor(
-    @repository(UsersRepository)
-    public usersRepository: UsersRepository,
-    @repository(TenantsRepository)
-    public tenantsRepository: TenantsRepository,
-    @repository(RolesRepository)
-    public rolesRepository: RolesRepository,
-    @repository(UserTenantsRepository)
-    public utRepository: UserTenantsRepository,
-    @repository(UserTenantPermissionsRepository)
-    public utPermsRepository: UserTenantPermissionsRepository,
+    @repository(UserRepository)
+    public usersRepository: UserRepository,
+    @repository(TenantRepository)
+    public tenantsRepository: TenantRepository,
+    @repository(RoleRepository)
+    public rolesRepository: RoleRepository,
+    @repository(UserTenantRepository)
+    public utRepository: UserTenantRepository,
+    @repository(UserTenantPermissionRepository)
+    public utPermsRepository: UserTenantPermissionRepository,
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
+    public jwtService: TokenService,
+    @inject(UserServiceBindings.USER_SERVICE)
+    public userService: MyUserService,
+    @inject(SecurityBindings.USER, {optional: true})
+    public user: UserDto,
   ) {}
+
+  @post('/users/login', {
+    responses: {
+      '200': {
+        description: 'Token',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                token: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+  async login(
+    @requestBody(CredentialsRequestBody) credentials: Credentials,
+  ): Promise<{token: string}> {
+    // ensure the user exists, and the password is correct,
+    const user = await this.userService.verifyCredentials(credentials);
+    // convert a User object into a UserProfile object (reduced set of properties)
+    const userProfile = this.userService.convertToUserProfile(user);
+    // create a JSON Web Token based on the user profile
+    const token = await this.jwtService.generateToken(userProfile);
+    return {token};
+  }
 
   @post('/users', {
     responses: {
@@ -31,7 +109,18 @@ export class UserController {
       },
     },
   })
-  async create(@requestBody() userObj: UserDto): Promise<UserDto> {
+  async create(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(UserDto, {
+            title: 'NewUser',
+          }),
+        },
+      },
+    })
+    userObj: UserDto,
+  ): Promise<UserDto> {
     // Look for tenant in DB
     let tenantExists = await this.tenantsRepository.findOne({
       where: {
@@ -56,7 +145,7 @@ export class UserController {
     // Create tenant first
     if (!tenantExists) {
       tenantExists = await this.tenantsRepository.create(
-        new Tenants({
+        new Tenant({
           name: userObj.tenant.name,
           type: userObj.tenant.type,
           status: 'active',
@@ -73,15 +162,19 @@ export class UserController {
     });
     if (!userExists) {
       // Create new user if does not exist
-      const userModel = new Users({
+      console.log(uuid());
+      const userModel = new User({
+        id: uuid(),
         firstName: userObj.firstName,
         middleName: userObj.middleName,
         lastName: userObj.lastName,
         username: userObj.username,
         email: userObj.email,
         phone: userObj.phone,
+        password: await hash(userObj.password, await genSalt()),
         defaultTenant: tenant.id!,
       });
+
       userExists = await this.usersRepository.create(userModel);
     } else {
       // Map the new tenant with existing user
@@ -89,7 +182,7 @@ export class UserController {
     userObj.id = userExists.id;
 
     const userTenant = await this.utRepository.create(
-      new UserTenants({
+      new UserTenant({
         roleId: roleExists.id,
         userId: userExists.id,
         tenantId: tenant.id,
@@ -100,7 +193,7 @@ export class UserController {
 
     if (userObj.permissions && userObj.permissions.length > 0) {
       const utPerms = userObj.permissions.map(perm => {
-        return new UserTenantPermissions({
+        return new UserTenantPermission({
           permission: perm.permission,
           allowed: perm.allowed,
           userTenantId: userTenant.id,
@@ -108,9 +201,10 @@ export class UserController {
       });
       await this.utPermsRepository.createAll(utPerms);
     }
-    return userObj;
+    return new UserDto(_.omit(userObj, 'password'));
   }
 
+  @authenticate('jwt')
   @get('/users/count', {
     responses: {
       '200': {
@@ -119,10 +213,11 @@ export class UserController {
       },
     },
   })
-  async count(@param.where(Users) where?: Where<Users>): Promise<Count> {
+  async count(@param.where(User) where?: Where<User>): Promise<Count> {
     return this.usersRepository.count(where);
   }
 
+  @authenticate('jwt')
   @get('/users', {
     responses: {
       '200': {
@@ -131,17 +226,18 @@ export class UserController {
           'application/json': {
             schema: {
               type: 'array',
-              items: getModelSchemaRef(Users, {includeRelations: true}),
+              items: getModelSchemaRef(User, {includeRelations: true}),
             },
           },
         },
       },
     },
   })
-  async find(@param.filter(Users) filter?: Filter<Users>): Promise<Users[]> {
+  async find(@param.filter(User) filter?: Filter<User>): Promise<User[]> {
     return this.usersRepository.find(filter);
   }
 
+  @authenticate('jwt')
   @patch('/users', {
     responses: {
       '200': {
@@ -154,36 +250,38 @@ export class UserController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Users, {partial: true}),
+          schema: getModelSchemaRef(User, {partial: true}),
         },
       },
     })
-    users: Users,
-    @param.where(Users) where?: Where<Users>,
+    users: User,
+    @param.where(User) where?: Where<User>,
   ): Promise<Count> {
     return this.usersRepository.updateAll(users, where);
   }
 
+  @authenticate('jwt')
   @get('/users/{id}', {
     responses: {
       '200': {
         description: 'Users model instance',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(Users, {includeRelations: true}),
+            schema: getModelSchemaRef(User, {includeRelations: true}),
           },
         },
       },
     },
   })
   async findById(
-    @param.path.number('id') id: number,
-    @param.filter(Users, {exclude: 'where'})
-    filter?: FilterExcludingWhere<Users>,
-  ): Promise<Users> {
+    @param.path.string('id') id: string,
+    @param.filter(User, {exclude: 'where'})
+    filter?: FilterExcludingWhere<User>,
+  ): Promise<User> {
     return this.usersRepository.findById(id, filter);
   }
 
+  @authenticate('jwt')
   @patch('/users/{id}', {
     responses: {
       '204': {
@@ -192,19 +290,20 @@ export class UserController {
     },
   })
   async updateById(
-    @param.path.number('id') id: number,
+    @param.path.string('id') id: string,
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Users, {partial: true}),
+          schema: getModelSchemaRef(User, {partial: true}),
         },
       },
     })
-    users: Users,
+    users: User,
   ): Promise<void> {
     await this.usersRepository.updateById(id, users);
   }
 
+  @authenticate('jwt')
   @put('/users/{id}', {
     responses: {
       '204': {
@@ -213,12 +312,13 @@ export class UserController {
     },
   })
   async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() users: Users,
+    @param.path.string('id') id: string,
+    @requestBody() users: User,
   ): Promise<void> {
     await this.usersRepository.replaceById(id, users);
   }
 
+  @authenticate('jwt')
   @del('/users/{id}', {
     responses: {
       '204': {
@@ -226,7 +326,7 @@ export class UserController {
       },
     },
   })
-  async deleteById(@param.path.number('id') id: number): Promise<void> {
+  async deleteById(@param.path.string('id') id: string): Promise<void> {
     await this.usersRepository.deleteById(id);
   }
 }

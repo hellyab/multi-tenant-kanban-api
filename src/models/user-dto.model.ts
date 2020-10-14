@@ -1,14 +1,15 @@
-import {Model, model, property} from '@loopback/repository';
+import {model, property} from '@loopback/repository';
 import {TenantDto} from './tenant-dto.model';
-import {UserPermissionsDto} from './user-permissions-dto.model';
+import {UserPermissionDto} from './user-permission-dto.model';
+import {User} from '@loopback/authentication-jwt';
 
 @model({settings: {}})
-export class UserDto extends Model {
+export class UserDto extends User {
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
   })
-  id?: number;
+  id: string;
 
   @property({
     type: 'string',
@@ -30,12 +31,7 @@ export class UserDto extends Model {
     type: 'string',
     required: true,
   })
-  username: string;
-
-  @property({
-    type: 'string',
-  })
-  email?: string;
+  password: string;
 
   @property({
     type: 'string',
@@ -54,8 +50,8 @@ export class UserDto extends Model {
   })
   tenant: TenantDto;
 
-  @property.array(UserPermissionsDto)
-  permissions?: UserPermissionsDto[];
+  @property.array(UserPermissionDto)
+  permissions?: UserPermissionDto[];
 
   constructor(data?: Partial<UserDto>) {
     super(data);

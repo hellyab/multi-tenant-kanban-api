@@ -1,7 +1,7 @@
 import {Model, model, property} from '@loopback/repository';
 
 @model({settings: {}})
-export class UserPermissionsDto extends Model {
+export class UserPermissionDto extends Model {
   @property({
     type: 'string',
     required: true,
@@ -14,7 +14,7 @@ export class UserPermissionsDto extends Model {
   })
   allowed: boolean;
 
-  constructor(data?: Partial<UserPermissionsDto>) {
+  constructor(data?: Partial<UserPermissionDto>) {
     super(data);
   }
 }

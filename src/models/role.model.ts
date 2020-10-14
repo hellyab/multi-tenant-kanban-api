@@ -8,7 +8,7 @@ import {BaseEntity} from './base-entity';
     table: 'roles',
   },
 })
-export class Roles extends BaseEntity {
+export class Role extends BaseEntity {
   @property({
     type: 'number',
     scale: 0,
@@ -72,7 +72,7 @@ export class Roles extends BaseEntity {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [prop: string]: any;
 
-  constructor(data?: Partial<Roles>) {
+  constructor(data?: Partial<Role>) {
     super(data);
   }
 }
@@ -81,4 +81,4 @@ export interface RolesRelations {
   // describe navigational properties here
 }
 
-export type RolesWithRelations = Roles & RolesRelations;
+export type RolesWithRelations = Role & RolesRelations;

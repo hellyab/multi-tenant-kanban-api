@@ -1,9 +1,6 @@
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
-import {
-  RestExplorerBindings,
-  RestExplorerComponent,
-} from '@loopback/rest-explorer';
+import {RestExplorerBindings, RestExplorerComponent} from '@loopback/rest-explorer';
 import {RepositoryMixin} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
@@ -11,6 +8,15 @@ import path from 'path';
 import {MySequence} from './sequence';
 import * as dotenv from 'dotenv';
 import * as dotenvExt from 'dotenv-extended';
+import {AuthenticationComponent} from '@loopback/authentication';
+import {
+  JWTAuthenticationComponent,
+  UserCredentialsRepository,
+  UserServiceBindings,
+} from '@loopback/authentication-jwt';
+import {PgdbDataSource} from './datasources';
+import {UserServiceService} from './services/user-service.service';
+import {UserRepository} from './repositories';
 
 export {ApplicationConfig};
 
@@ -50,5 +56,18 @@ export class MultiTenantKanbanApiApplication extends BootMixin(
       schema: '.env.example',
       errorOnMissing: true,
     });
+
+    this.component(AuthenticationComponent);
+    // Mount jwt component
+    this.component(JWTAuthenticationComponent);
+    // Bind datasource
+    this.dataSource(PgdbDataSource, UserServiceBindings.DATASOURCE_NAME);
+    // Bind user service
+    this.bind(UserServiceBindings.USER_SERVICE).toClass(UserServiceService);
+    // Bind user and credentials repository
+    this.bind(UserServiceBindings.USER_REPOSITORY).toClass(UserRepository);
+    this.bind(UserServiceBindings.USER_CREDENTIALS_REPOSITORY).toClass(
+      UserCredentialsRepository,
+    );
   }
 }

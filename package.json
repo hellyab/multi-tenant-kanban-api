@@ -47,6 +47,8 @@
     "!*/__tests__"
   ],
   "dependencies": {
+    "@loopback/authentication": "^7.0.2",
+    "@loopback/authentication-jwt": "^0.7.2",
     "@loopback/boot": "^3.0.2",
     "@loopback/core": "^2.11.0",
     "@loopback/repository": "^3.1.0",
@@ -55,16 +57,22 @@
     "@loopback/service-proxy": "^3.0.2",
     "dotenv": "^8.2.0",
     "dotenv-extended": "^2.9.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.20",
+    "loopback-connector-kv-redis": "^3.0.3",
     "loopback-connector-postgresql": "^5.2.0",
+    "loopback4-authentication": "^4.0.1",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
     "@loopback/build": "^6.2.5",
-    "source-map-support": "^0.5.19",
-    "@loopback/testlab": "^3.2.7",
-    "@types/node": "^10.17.37",
     "@loopback/eslint-config": "^10.0.1",
+    "@loopback/testlab": "^3.2.7",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/node": "^10.17.37",
+    "@types/uuid": "^8.3.0",
     "eslint": "^7.10.0",
+    "source-map-support": "^0.5.19",
     "typescript": "~4.0.3"
   }
 }

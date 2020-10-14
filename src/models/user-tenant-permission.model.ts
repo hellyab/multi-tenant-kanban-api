@@ -1,5 +1,5 @@
 import {belongsTo, model, property} from '@loopback/repository';
-import {UserTenants} from './user-tenants.model';
+import {UserTenant} from './user-tenant.model';
 import {BaseEntity} from './base-entity';
 
 @model({
@@ -11,7 +11,7 @@ import {BaseEntity} from './base-entity';
     },
   },
 })
-export class UserTenantPermissions extends BaseEntity {
+export class UserTenantPermission extends BaseEntity {
   @property({
     type: 'number',
     scale: 0,
@@ -28,7 +28,7 @@ export class UserTenantPermissions extends BaseEntity {
   id: number;
 
   @belongsTo(
-    () => UserTenants,
+    () => UserTenant,
     {keyFrom: 'user_tenant_id', name: 'user_tenant_id'},
     {
       name: 'user_tenant_id',
@@ -99,7 +99,7 @@ export class UserTenantPermissions extends BaseEntity {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [prop: string]: any;
 
-  constructor(data?: Partial<UserTenantPermissions>) {
+  constructor(data?: Partial<UserTenantPermission>) {
     super(data);
   }
 }
@@ -108,5 +108,5 @@ export interface UserTenantPermissionsRelations {
   // describe navigational properties here
 }
 
-export type UserTenantPermissionsWithRelations = UserTenantPermissions &
+export type UserTenantPermissionsWithRelations = UserTenantPermission &
   UserTenantPermissionsRelations;

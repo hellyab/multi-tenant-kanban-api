@@ -1,48 +1,34 @@
-import {Entity, model, property} from '@loopback/repository';
+import {model, property} from '@loopback/repository';
+import {UserModifiableEntity} from './user-modifiable-entity.model';
 
 @model({
   settings: {
     idInjection: false,
-    postgresql: {schema: 'multi_tenant_kanban', table: 'user_credentials'},
+    postgresql: {schema: 'multi_tenant_kanban', table: 'users'},
   },
 })
-export class UserCredentials extends Entity {
+export class User extends UserModifiableEntity {
   @property({
-    type: 'number',
+    type: 'string',
     scale: 0,
     id: 1,
     postgresql: {
       columnName: 'id',
-      dataType: 'integer',
+      dataType: 'varchar',
       dataLength: null,
       dataPrecision: null,
       dataScale: 0,
       nullable: 'NO',
     },
   })
-  id: number;
-
-  @property({
-    type: 'number',
-    required: true,
-    scale: 0,
-    postgresql: {
-      columnName: 'user_id',
-      dataType: 'integer',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: 0,
-      nullable: 'NO',
-    },
-  })
-  userId: number;
+  id: string;
 
   @property({
     type: 'string',
     required: true,
     length: 50,
     postgresql: {
-      columnName: 'auth_provider',
+      columnName: 'first_name',
       dataType: 'character varying',
       dataLength: 50,
       dataPrecision: null,
@@ -50,91 +36,117 @@ export class UserCredentials extends Entity {
       nullable: 'NO',
     },
   })
-  authProvider: string;
+  firstName: string;
 
   @property({
     type: 'string',
-    length: 100,
+    length: 50,
     postgresql: {
-      columnName: 'auth_id',
+      columnName: 'middle_name',
       dataType: 'character varying',
-      dataLength: 100,
+      dataLength: 50,
       dataPrecision: null,
       dataScale: null,
       nullable: 'YES',
     },
   })
-  authId?: string;
+  middleName?: string;
 
   @property({
     type: 'string',
-    length: 100,
+    length: 50,
     postgresql: {
-      columnName: 'auth_token',
+      columnName: 'last_name',
       dataType: 'character varying',
-      dataLength: 100,
+      dataLength: 50,
       dataPrecision: null,
       dataScale: null,
       nullable: 'YES',
     },
   })
-  authToken?: string;
+  lastName?: string;
 
   @property({
     type: 'string',
-    length: 60,
+    required: true,
+    length: 150,
+    postgresql: {
+      columnName: 'username',
+      dataType: 'character varying',
+      dataLength: 150,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'NO',
+    },
+  })
+  username: string;
+
+  @property({
+    type: 'string',
+    required: true,
     postgresql: {
       columnName: 'password',
+      dataType: 'text',
+      nullable: 'NO',
+    },
+  })
+  password: string;
+
+  @property({
+    type: 'string',
+    length: 150,
+    postgresql: {
+      columnName: 'email',
       dataType: 'character varying',
-      dataLength: 60,
+      dataLength: 150,
       dataPrecision: null,
       dataScale: null,
       nullable: 'YES',
     },
   })
-  password?: string;
+  email: string;
+
+  @property({
+    type: 'string',
+    length: 15,
+    postgresql: {
+      columnName: 'phone',
+      dataType: 'character varying',
+      dataLength: 15,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'YES',
+    },
+  })
+  phone?: string;
+
+  @property({
+    type: 'number',
+    required: true,
+    scale: 0,
+    postgresql: {
+      columnName: 'default_tenant',
+      dataType: 'integer',
+      dataLength: null,
+      dataPrecision: null,
+      dataScale: 0,
+      nullable: 'NO',
+    },
+  })
+  defaultTenant: number;
 
   @property({
     type: 'date',
-    required: true,
     postgresql: {
-      columnName: 'created_on',
+      columnName: 'last_login',
       dataType: 'timestamp with time zone',
       dataLength: null,
       dataPrecision: null,
       dataScale: null,
-      nullable: 'NO',
+      nullable: 'YES',
     },
   })
-  createdOn: string;
-
-  @property({
-    type: 'date',
-    required: true,
-    postgresql: {
-      columnName: 'modified_on',
-      dataType: 'timestamp with time zone',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  modifiedOn: string;
-
-  @property({
-    type: 'boolean',
-    required: true,
-    postgresql: {
-      columnName: 'deleted',
-      dataType: 'boolean',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'NO',
-    },
-  })
-  deleted: boolean;
+  lastLogin?: string;
 
   // Define well-known properties here
 
@@ -142,14 +154,13 @@ export class UserCredentials extends Entity {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [prop: string]: any;
 
-  constructor(data?: Partial<UserCredentials>) {
+  constructor(data?: Partial<User>) {
     super(data);
   }
 }
 
-export interface UserCredentialsRelations {
+export interface UsersRelations {
   // describe navigational properties here
 }
 
-export type UserCredentialsWithRelations = UserCredentials &
-  UserCredentialsRelations;
+export type UsersWithRelations = User & UsersRelations;

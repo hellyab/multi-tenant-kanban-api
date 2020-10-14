@@ -4,10 +4,10 @@ import {UserModifiableEntity} from './user-modifiable-entity.model';
 @model({
   settings: {
     idInjection: false,
-    postgresql: {schema: 'multi_tenant_kanban', table: 'users'},
+    postgresql: {schema: 'multi_tenant_kanban', table: 'tenants'},
   },
 })
-export class Users extends UserModifiableEntity {
+export class Tenant extends UserModifiableEntity {
   @property({
     type: 'number',
     scale: 0,
@@ -26,116 +26,159 @@ export class Users extends UserModifiableEntity {
   @property({
     type: 'string',
     required: true,
-    length: 50,
+    length: 100,
     postgresql: {
-      columnName: 'first_name',
+      columnName: 'name',
       dataType: 'character varying',
-      dataLength: 50,
+      dataLength: 100,
       dataPrecision: null,
       dataScale: null,
       nullable: 'NO',
     },
   })
-  firstName: string;
-
-  @property({
-    type: 'string',
-    length: 50,
-    postgresql: {
-      columnName: 'middle_name',
-      dataType: 'character varying',
-      dataLength: 50,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'YES',
-    },
-  })
-  middleName?: string;
-
-  @property({
-    type: 'string',
-    length: 50,
-    postgresql: {
-      columnName: 'last_name',
-      dataType: 'character varying',
-      dataLength: 50,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'YES',
-    },
-  })
-  lastName?: string;
+  name: string;
 
   @property({
     type: 'string',
     required: true,
-    length: 150,
+    length: 50,
     postgresql: {
-      columnName: 'username',
+      columnName: 'type',
       dataType: 'character varying',
-      dataLength: 150,
+      dataLength: 50,
       dataPrecision: null,
       dataScale: null,
       nullable: 'NO',
     },
   })
-  username: string;
+  type: string;
 
   @property({
     type: 'string',
-    length: 150,
+    length: 100,
     postgresql: {
-      columnName: 'email',
+      columnName: 'address1',
       dataType: 'character varying',
-      dataLength: 150,
+      dataLength: 100,
       dataPrecision: null,
       dataScale: null,
       nullable: 'YES',
     },
   })
-  email?: string;
+  address1?: string;
 
   @property({
     type: 'string',
-    length: 15,
+    length: 100,
     postgresql: {
-      columnName: 'phone',
+      columnName: 'address2',
       dataType: 'character varying',
-      dataLength: 15,
+      dataLength: 100,
       dataPrecision: null,
       dataScale: null,
       nullable: 'YES',
     },
   })
-  phone?: string;
+  address2?: string;
 
   @property({
-    type: 'number',
+    type: 'string',
+    length: 100,
+    postgresql: {
+      columnName: 'address3',
+      dataType: 'character varying',
+      dataLength: 100,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'YES',
+    },
+  })
+  address3?: string;
+
+  @property({
+    type: 'string',
+    length: 100,
+    postgresql: {
+      columnName: 'address4',
+      dataType: 'character varying',
+      dataLength: 100,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'YES',
+    },
+  })
+  address4?: string;
+
+  @property({
+    type: 'string',
+    length: 100,
+    postgresql: {
+      columnName: 'city',
+      dataType: 'character varying',
+      dataLength: 100,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'YES',
+    },
+  })
+  city?: string;
+
+  @property({
+    type: 'string',
+    length: 100,
+    postgresql: {
+      columnName: 'state',
+      dataType: 'character varying',
+      dataLength: 100,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'YES',
+    },
+  })
+  state?: string;
+
+  @property({
+    type: 'string',
+    length: 20,
+    postgresql: {
+      columnName: 'zip',
+      dataType: 'character varying',
+      dataLength: 20,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'YES',
+    },
+  })
+  zip?: string;
+
+  @property({
+    type: 'string',
+    length: 50,
+    postgresql: {
+      columnName: 'country',
+      dataType: 'character varying',
+      dataLength: 50,
+      dataPrecision: null,
+      dataScale: null,
+      nullable: 'YES',
+    },
+  })
+  country?: string;
+
+  @property({
+    type: 'string',
     required: true,
-    scale: 0,
+    length: 50,
     postgresql: {
-      columnName: 'default_tenant',
-      dataType: 'integer',
-      dataLength: null,
+      columnName: 'status',
+      dataType: 'character varying',
+      dataLength: 50,
       dataPrecision: null,
-      dataScale: 0,
+      dataScale: null,
       nullable: 'NO',
     },
   })
-  defaultTenant: number;
-
-  @property({
-    type: 'date',
-    postgresql: {
-      columnName: 'last_login',
-      dataType: 'timestamp with time zone',
-      dataLength: null,
-      dataPrecision: null,
-      dataScale: null,
-      nullable: 'YES',
-    },
-  })
-  lastLogin?: string;
+  status: string;
 
   // Define well-known properties here
 
@@ -143,13 +186,13 @@ export class Users extends UserModifiableEntity {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [prop: string]: any;
 
-  constructor(data?: Partial<Users>) {
+  constructor(data?: Partial<Tenant>) {
     super(data);
   }
 }
 
-export interface UsersRelations {
+export interface TenantsRelations {
   // describe navigational properties here
 }
 
-export type UsersWithRelations = Users & UsersRelations;
+export type TenantsWithRelations = Tenant & TenantsRelations;
