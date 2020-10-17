@@ -54,18 +54,6 @@ export class TaskController {
     return this.taskRepository.create(task);
   }
 
-  @get('/tasks/count', {
-    responses: {
-      '200': {
-        description: 'Task model count',
-        content: {'application/json': {schema: CountSchema}},
-      },
-    },
-  })
-  async count(@param.where(Task) where?: Where<Task>): Promise<Count> {
-    return this.taskRepository.count(where);
-  }
-
   @get('/tasks', {
     responses: {
       '200': {

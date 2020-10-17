@@ -4,12 +4,6 @@ import {juggler} from '@loopback/repository';
 const config = {
   name: 'pgdb',
   connector: 'postgresql',
-  host: 'localhost',
-  port: '5432',
-  user: 'postgres',
-  password: 'password',
-  database: 'multi_tenant_kanban',
-  schema: 'multi_tenant_kanban',
   url:
     'postgres://zensqpov:kGFsthqRugJjzyDrPG6TjKmUZT3xqX4m@kandula.db.elephantsql.com:5432/zensqpov',
 };
@@ -30,12 +24,7 @@ export class PgdbDataSource
     dsConfig: object = config,
   ) {
     Object.assign(dsConfig, {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-      schema: process.env.DB_SCHEMA,
+      url: process.env.PG_URL,
     });
     super(dsConfig);
   }

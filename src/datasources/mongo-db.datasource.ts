@@ -4,13 +4,7 @@ import {juggler} from '@loopback/repository';
 const config = {
   name: 'MongoDb',
   connector: 'mongodb',
-  url:
-    'mongodb+srv://admin:admin@cluster0-9vwws.mongodb.net/test?retryWrites=true&w=majority',
-  host: 'cluster0.9vwws.mongodb.net',
-  port: 0,
-  user: 'admin',
-  password: 'admin',
-  database: 'loopback',
+  url: 'MONGO_UR:',
   useNewUrlParser: true,
 };
 
@@ -29,6 +23,9 @@ export class MongoDbDataSource
     @inject('datasources.config.MongoDb', {optional: true})
     dsConfig: object = config,
   ) {
+    Object.assign(dsConfig, {
+      url: process.env.MONGO_URL,
+    });
     super(dsConfig);
   }
 }
