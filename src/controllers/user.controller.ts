@@ -22,10 +22,36 @@ import {
   UserTenantPermissionRepository,
   UserTenantRepository,
 } from '../repositories';
-import {Credentials, MyUserService, TokenServiceBindings, UserServiceBindings} from '@loopback/authentication-jwt';
+import {RefreshTokenServiceBindings, TokenServiceBindings, UserServiceBindings} from '../keys';
+import {Credentials, MyUserService, TokenObject} from '@loopback/authentication-jwt';
 import {inject} from '@loopback/core';
 import {authenticate, TokenService} from '@loopback/authentication';
 import _ from 'lodash';
+import {RefreshTokenService} from '../services';
+// Describes the type of grant object taken in by method "refresh"
+type RefreshGrant = {
+  refreshToken: string;
+};
+
+// Describes the schema of grant object
+const RefreshGrantSchema: SchemaObject = {
+  type: 'object',
+  required: ['refreshToken'],
+  properties: {
+    refreshToken: {
+      type: 'string',
+    },
+  },
+};
+
+// Describes the request body of grant object
+const RefreshGrantRequestBody = {
+  description: 'Reissuing Acess Token',
+  required: true,
+  content: {
+    'application/json': {schema: RefreshGrantSchema},
+  },
+};
 
 const CredentialsSchema: SchemaObject = {
   type: 'object',
@@ -64,6 +90,8 @@ export class UserController {
     public utPermsRepository: UserTenantPermissionRepository,
     @inject(TokenServiceBindings.TOKEN_SERVICE)
     public jwtService: TokenService,
+    @inject(RefreshTokenServiceBindings.REFRESH_TOKEN_SERVICE)
+    public refreshService: RefreshTokenService,
     @inject(UserServiceBindings.USER_SERVICE)
     public userService: MyUserService,
     @inject(SecurityBindings.USER, {optional: true})
@@ -91,14 +119,41 @@ export class UserController {
   })
   async login(
     @requestBody(CredentialsRequestBody) credentials: Credentials,
-  ): Promise<{token: string}> {
+  ): Promise<TokenObject> {
     // ensure the user exists, and the password is correct,
     const user = await this.userService.verifyCredentials(credentials);
     // convert a User object into a UserProfile object (reduced set of properties)
+    //NOTE: This method actually adds an entire user into the token
     const userProfile = this.userService.convertToUserProfile(user);
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
-    return {token};
+    const tokens = await this.refreshService.generateToken(userProfile, token);
+    return tokens;
+  }
+
+  @post('/refresh', {
+    responses: {
+      '200': {
+        description: 'Token',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                accessToken: {
+                  type: 'object',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+  async refresh(
+    @requestBody(RefreshGrantRequestBody) refreshGrant: RefreshGrant,
+  ): Promise<TokenObject> {
+    return this.refreshService.refreshToken(refreshGrant.refreshToken);
   }
 
   @post('/users', {

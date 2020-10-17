@@ -8,15 +8,15 @@ import path from 'path';
 import {MySequence} from './sequence';
 import * as dotenv from 'dotenv';
 import * as dotenvExt from 'dotenv-extended';
-import {AuthenticationComponent} from '@loopback/authentication';
-import {
-  JWTAuthenticationComponent,
-  UserCredentialsRepository,
-  UserServiceBindings,
-} from '@loopback/authentication-jwt';
+import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
+import {UserServiceBindings} from './keys';
+import {UserCredentialsRepository} from '@loopback/authentication-jwt';
+
 import {PgdbDataSource} from './datasources';
-import {UserServiceService} from './services/user-service.service';
+import {UserServiceService} from './services';
 import {UserRepository} from './repositories';
+import {JWTAuthenticationStrategy} from './services/jwt-authentication.strategy';
+import {JWTAuthenticationComponent} from './controllers/jwt-authentication-component';
 
 export {ApplicationConfig};
 
@@ -69,5 +69,6 @@ export class MultiTenantKanbanApiApplication extends BootMixin(
     this.bind(UserServiceBindings.USER_CREDENTIALS_REPOSITORY).toClass(
       UserCredentialsRepository,
     );
+    registerAuthenticationStrategy(this, JWTAuthenticationStrategy);
   }
 }

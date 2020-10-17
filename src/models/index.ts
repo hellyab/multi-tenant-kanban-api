@@ -7,3 +7,5 @@ export * from './user.model';
 export * from './tenant-dto.model';
 export * from './user-dto.model';
 export * from './user-permission-dto.model';
+export * from './refresh-token.model';
+export * from './task.model';

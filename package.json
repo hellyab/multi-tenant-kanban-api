@@ -60,6 +60,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "loopback-connector-kv-redis": "^3.0.3",
+    "loopback-connector-mongodb": "^5.4.0",
     "loopback-connector-postgresql": "^5.2.0",
     "loopback4-authentication": "^4.0.1",
     "tslib": "^2.0.0"

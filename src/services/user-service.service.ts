@@ -5,7 +5,9 @@ import {securityId, UserProfile} from '@loopback/security';
 import {compare} from 'bcryptjs';
 import {UserRepository} from '../repositories';
 
-import {Credentials, User} from '@loopback/authentication-jwt';
+import {User} from '../models';
+
+import {Credentials} from '@loopback/authentication-jwt';
 
 export class UserServiceService implements UserService<User, Credentials> {
   constructor(
@@ -38,14 +40,9 @@ export class UserServiceService implements UserService<User, Credentials> {
       throw new HttpErrors.Unauthorized(invalidCredentialsError);
     }
 
-    return new User({
-      email: foundUser.email,
-      id: foundUser.id,
-      username: foundUser.username,
-    });
+    return foundUser;
   }
 
-  // User --> MyUser
   convertToUserProfile(user: User): UserProfile {
     return {
       [securityId]: user.id.toString(),
@@ -53,6 +50,19 @@ export class UserServiceService implements UserService<User, Credentials> {
       id: user.id,
       email: user.email,
     };
+  }
+
+  //function to find user by id
+  async findUserById(id: string) {
+    const userNotfound = 'invalid User';
+    const foundUser = await this.userRepository.findOne({
+      where: {id: id},
+    });
+
+    if (!foundUser) {
+      throw new HttpErrors.Unauthorized(userNotfound);
+    }
+    return foundUser;
   }
 
   /*
