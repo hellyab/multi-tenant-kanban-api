@@ -10,6 +10,8 @@ const config = {
   password: 'password',
   database: 'multi_tenant_kanban',
   schema: 'multi_tenant_kanban',
+  url:
+    'postgres://zensqpov:kGFsthqRugJjzyDrPG6TjKmUZT3xqX4m@kandula.db.elephantsql.com:5432/zensqpov',
 };
 
 // Observe application's life cycle to disconnect the datasource when
