@@ -54,6 +54,7 @@ export class TaskController {
     return this.taskRepository.create(task);
   }
 
+  @authenticate('jwt')
   @get('/tasks', {
     responses: {
       '200': {
@@ -73,6 +74,7 @@ export class TaskController {
     return this.taskRepository.find(filter);
   }
 
+  @authenticate('jwt')
   @patch('/tasks', {
     responses: {
       '200': {
@@ -82,19 +84,20 @@ export class TaskController {
     },
   })
   async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Task, {partial: true}),
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(Task, {partial: true}),
+          },
         },
-      },
-    })
-    task: Task,
-    @param.where(Task) where?: Where<Task>,
+      })
+          task: Task,
+      @param.where(Task) where?: Where<Task>,
   ): Promise<Count> {
     return this.taskRepository.updateAll(task, where);
   }
 
+  @authenticate('jwt')
   @get('/tasks/{id}', {
     responses: {
       '200': {
@@ -108,12 +111,13 @@ export class TaskController {
     },
   })
   async findById(
-    @param.path.string('id') id: string,
-    @param.filter(Task, {exclude: 'where'}) filter?: FilterExcludingWhere<Task>,
+      @param.path.string('id') id: string,
+      @param.filter(Task, {exclude: 'where'}) filter?: FilterExcludingWhere<Task>,
   ): Promise<Task> {
     return this.taskRepository.findById(id, filter);
   }
 
+  @authenticate('jwt')
   @patch('/tasks/{id}', {
     responses: {
       '204': {
@@ -122,19 +126,20 @@ export class TaskController {
     },
   })
   async updateById(
-    @param.path.string('id') id: string,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Task, {partial: true}),
+      @param.path.string('id') id: string,
+      @requestBody({
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(Task, {partial: true}),
+          },
         },
-      },
-    })
-    task: Task,
+      })
+          task: Task,
   ): Promise<void> {
     await this.taskRepository.updateById(id, task);
   }
 
+  @authenticate('jwt')
   @put('/tasks/{id}', {
     responses: {
       '204': {
@@ -143,12 +148,13 @@ export class TaskController {
     },
   })
   async replaceById(
-    @param.path.string('id') id: string,
-    @requestBody() task: Task,
+      @param.path.string('id') id: string,
+      @requestBody() task: Task,
   ): Promise<void> {
     await this.taskRepository.replaceById(id, task);
   }
 
+  @authenticate('jwt')
   @del('/tasks/{id}', {
     responses: {
       '204': {
