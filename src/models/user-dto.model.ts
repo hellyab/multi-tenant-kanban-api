@@ -24,6 +24,7 @@ export class UserDto extends User {
 
   @property({
     type: 'string',
+    required: true,
   })
   lastName?: string;
 

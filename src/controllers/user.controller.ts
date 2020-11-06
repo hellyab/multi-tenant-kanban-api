@@ -57,7 +57,7 @@ const CredentialsSchema: SchemaObject = {
   type: 'object',
   required: ['email', 'password'],
   properties: {
-    username: {
+    email: {
       type: 'string',
       format: 'email',
     },
@@ -131,7 +131,7 @@ export class UserController {
     return tokens;
   }
 
-  @post('/refresh', {
+  @post('/users/refresh', {
     responses: {
       '200': {
         description: 'Token',
