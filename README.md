@@ -76,4 +76,5 @@ npm test
 Please check out [LoopBack 4 documentation](https://loopback.io/doc/en/lb4/) to
 understand how you can continue to add features to this application.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/20bd02fc7d9a487393b2d88ec98cc90d)](https://app.codacy.com/gh/hellyab/multi-tenant-kanban-api?utm_source=github.com&utm_medium=referral&utm_content=hellyab/multi-tenant-kanban-api&utm_campaign=Badge_Grade)
 [![LoopBack](<https://github.com/strongloop/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png>)](http://loopback.io/)
